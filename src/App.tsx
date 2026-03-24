@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Send, Loader2, MessageSquare, Moon, Star, Coffee } from 'lucide-react';
-
 
 const VIBES = [
   { id: 'cosmic', name: 'Cosmic Oracle', icon: Star, description: 'Answers from the deep universe.' },
@@ -10,41 +9,75 @@ const VIBES = [
   { id: 'roommate', name: 'Passive Aggressive', icon: Coffee, description: 'Slightly annoyed you even asked.' }
 ];
 
+const MAX_REQUESTS = 3;
+const TIME_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+
 export default function App() {
   const [dilemma, setDilemma] = useState('');
   const [vibe, setVibe] = useState(VIBES[0]);
   const [answer, setAnswer] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [rateLimitError, setRateLimitError] = useState('');
 
-  const askOracle = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!dilemma.trim()) return;
-
-  setIsThinking(true);
-  setAnswer('');
-
-  try {
-    // Call your secure Netlify Function instead of calling Gemini directly
-    const response = await fetch('/.netlify/functions/ask-oracle', {
-      method: 'POST',
-      body: JSON.stringify({ dilemma, vibe }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to fetch');
+  // Helper to check and update frontend rate limits
+  const checkFrontendRateLimit = () => {
+    const history = JSON.parse(localStorage.getItem('oracle_history') || '[]');
+    const now = Date.now();
+    
+    // Keep only requests from the last hour
+    const recentRequests = history.filter((time: number) => now - time < TIME_WINDOW_MS);
+    
+    if (recentRequests.length >= MAX_REQUESTS) {
+      const oldestRequest = recentRequests[0];
+      const timeUntilReset = Math.ceil((TIME_WINDOW_MS - (now - oldestRequest)) / 60000);
+      return `The Oracle requires rest. Please try again in ${timeUntilReset} minutes.`;
     }
 
-    setAnswer(data.answer);
-  } catch (error) {
-    console.error(error);
-    setAnswer('The cosmic connection was interrupted. The stars refuse to align today. Try again later.');
-  } finally {
-    setIsThinking(false);
-  }
-};
+    // Save the new request time
+    recentRequests.push(now);
+    localStorage.setItem('oracle_history', JSON.stringify(recentRequests));
+    return null;
+  };
+
+  const askOracle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dilemma.trim()) return;
+
+    setRateLimitError('');
+    
+    // 1. Check frontend soft limit
+    const limitMessage = checkFrontendRateLimit();
+    if (limitMessage) {
+      setRateLimitError(limitMessage);
+      return;
+    }
+
+    setIsThinking(true);
+    setAnswer('');
+
+    try {
+      // 2. Call secure Netlify Function
+      const response = await fetch('/.netlify/functions/ask-oracle', {
+        method: 'POST',
+        body: JSON.stringify({ dilemma, vibe }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // If the backend blocked it, show the backend's error message
+        throw new Error(data.error || 'Failed to fetch');
+      }
+
+      setAnswer(data.answer);
+    } catch (error: any) {
+      console.error(error);
+      setAnswer(error.message || 'The cosmic connection was interrupted. The stars refuse to align today. Try again later.');
+    } finally {
+      setIsThinking(false);
+    }
+  };
 
   const handleFeedbackSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -158,6 +191,12 @@ export default function App() {
                   })}
                 </div>
               </div>
+
+              {rateLimitError && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
+                  {rateLimitError}
+                </div>
+              )}
 
               <button
                 type="submit"
