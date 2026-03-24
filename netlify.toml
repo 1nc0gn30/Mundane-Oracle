@@ -1,0 +1,20 @@
+[build]
+  # This is the command Netlify will run to compile your Vite React app
+  command = "npm run build"
+  
+  # This is the directory Vite outputs the compiled frontend to
+  publish = "dist"
+
+[functions]
+  # Tells Netlify where to look for your serverless backend functions
+  directory = "netlify/functions"
+  
+  # Uses esbuild to automatically bundle and compile your TypeScript function
+  node_bundler = "esbuild"
+
+# Single Page Application (SPA) routing fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false

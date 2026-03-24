@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI } from '@google/genai';
 import { Sparkles, Send, Loader2, MessageSquare, Moon, Star, Coffee } from 'lucide-react';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const VIBES = [
   { id: 'cosmic', name: 'Cosmic Oracle', icon: Star, description: 'Answers from the deep universe.' },
@@ -20,27 +18,33 @@ export default function App() {
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const askOracle = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!dilemma.trim()) return;
+  e.preventDefault();
+  if (!dilemma.trim()) return;
 
-    setIsThinking(true);
-    setAnswer('');
+  setIsThinking(true);
+  setAnswer('');
 
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `The user has a mundane, trivial everyday dilemma: "${dilemma}". 
-        Make a definitive choice for them, but justify it in the persona of a ${vibe.name} (${vibe.description}). 
-        Keep it under 3 paragraphs. Make it highly entertaining, slightly absurd, but ultimately give a clear answer to their dilemma.`,
-      });
-      setAnswer(response.text || 'The oracle is silent.');
-    } catch (error) {
-      console.error(error);
-      setAnswer('The cosmic connection was interrupted. The stars refuse to align today. Try again later.');
-    } finally {
-      setIsThinking(false);
+  try {
+    // Call your secure Netlify Function instead of calling Gemini directly
+    const response = await fetch('/.netlify/functions/ask-oracle', {
+      method: 'POST',
+      body: JSON.stringify({ dilemma, vibe }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch');
     }
-  };
+
+    setAnswer(data.answer);
+  } catch (error) {
+    console.error(error);
+    setAnswer('The cosmic connection was interrupted. The stars refuse to align today. Try again later.');
+  } finally {
+    setIsThinking(false);
+  }
+};
 
   const handleFeedbackSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
