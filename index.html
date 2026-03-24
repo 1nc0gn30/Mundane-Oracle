@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mundane Oracle | Overthinking the little things</title>
+    <meta name="description" content="The everyday app that makes your trivial decisions using absurdly dramatic cosmic reasoning." />
+    <meta name="keywords" content="decision maker, oracle, mundane, funny app, AI decision, everyday app" />
+    <meta property="og:title" content="Mundane Oracle" />
+    <meta property="og:description" content="Overthinking the little things so you don't have to." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mundane Oracle" />
+    <meta name="twitter:description" content="Overthinking the little things so you don't have to." />
+  </head>
+  <body class="bg-slate-950 text-slate-50 antialiased selection:bg-indigo-500/30">
+    <!-- A hidden form to ensure Netlify's build bots parse it for form handling -->
+    <form name="oracle-feedback" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+    </form>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
