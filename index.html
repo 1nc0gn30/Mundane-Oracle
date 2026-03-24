@@ -3,25 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mundane Oracle | Overthinking the little things</title>
-    <meta name="description" content="The everyday app that makes your trivial decisions using absurdly dramatic cosmic reasoning." />
-    <meta name="keywords" content="decision maker, oracle, mundane, funny app, AI decision, everyday app" />
-    <meta property="og:title" content="Mundane Oracle" />
-    <meta property="og:description" content="Overthinking the little things so you don't have to." />
+    
+    <title>Mundane Oracle | AI Decision Maker for Everyday Dilemmas</title>
+    <meta name="title" content="Mundane Oracle | AI Decision Maker for Everyday Dilemmas" />
+    <meta name="description" content="Stop overthinking the little things. Mundane Oracle is a fun, AI-powered app that makes your trivial everyday decisions using absurdly dramatic cosmic reasoning." />
+    <meta name="keywords" content="AI decision maker, funny oracle, mundane dilemma, everyday decisions, Gemini AI app, random choice generator, humorous AI, decision paralysis" />
+    <meta name="author" content="Neal Frazier" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#020617" /> <link rel="canonical" href="https://mundaneoracle.nealfrazier.tech/" />
+
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mundane Oracle" />
-    <meta name="twitter:description" content="Overthinking the little things so you don't have to." />
+    <meta property="og:url" content="https://mundaneoracle.nealfrazier.tech/" />
+    <meta property="og:site_name" content="Mundane Oracle" />
+    <meta property="og:title" content="Mundane Oracle | Overthinking the little things so you don't have to." />
+    <meta property="og:description" content="Submit your trivial dilemma to the void. The Oracle will make a definitive choice for you in the persona of a Cosmic Entity, Noir Detective, or Soap Opera star." />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://nealfrazier.tech/og-image.jpg" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="mundaneoracle.nealfrazier.tech" />
+    <meta property="twitter:url" content="https://mundaneoracle.nealfrazier.tech/" />
+    <meta property="twitter:title" content="Mundane Oracle | AI Decision Maker" />
+    <meta property="twitter:description" content="Overthinking the little things so you don't have to. Submit your trivial dilemma to the void." />
+    <meta property="twitter:image" content="https://nealfrazier.tech/og-image.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body class="bg-slate-950 text-slate-50 antialiased selection:bg-indigo-500/30">
-    <!-- A hidden form to ensure Netlify's build bots parse it for form handling -->
+    
     <form name="oracle-feedback" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>
     </form>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
